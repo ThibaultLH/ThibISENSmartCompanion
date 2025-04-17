@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
     private val appDatabase: AppDatabase by lazy {
         Room.databaseBuilder(
             applicationContext,
