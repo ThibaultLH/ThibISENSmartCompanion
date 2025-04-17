@@ -2,7 +2,6 @@ package fr.isen.lheritier.isensmartcompanion.composable
 
 import android.content.Context
 import android.content.SharedPreferences
-import android.util.Log
 import fr.isen.lheritier.isensmartcompanion.data.Event
 import androidx.core.content.edit
 
@@ -23,15 +22,14 @@ object PreferencesManager {
 
     fun getEnabledEventIds(context: Context): List<String> {
         return getPrefs(context).all
-            .filter { it.value == true } // Filtrer les événements activés (valeur = true)
+            .filter { it.value == true }
             .keys.toList()
     }
 
     fun getEnabledEvents(context: Context, allEvents: List<Event>): List<Event> {
         val enabledIds = getEnabledEventIds(context)
-
-        Log.d("PreferencesManager", "Pref Événements activés: $enabledIds")
-        Log.d("PreferencesManager", "Pref Tous les événements: $allEvents")
+        //Log.d("PreferencesManager", "Pref Événements activés: $enabledIds")
+        //Log.d("PreferencesManager", "Pref Tous les événements: $allEvents")
         return allEvents.filter { it.id in enabledIds }
     }
 }

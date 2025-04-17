@@ -1,4 +1,4 @@
-package fr.isen.lheritier.isensmartcompanion.notifications
+package fr.isen.lheritier.isensmartcompanion.composable
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -13,7 +13,6 @@ object NotificationHelper {
     private const val CHANNEL_NAME = "Événements"
     private const val CHANNEL_DESCRIPTION = "Notifications pour les événements"
 
-    // Crée un canal de notification (nécessaire pour Android 8.0 et supérieur)
     fun createNotificationChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
@@ -24,25 +23,18 @@ object NotificationHelper {
             notificationManager.createNotificationChannel(channel)
         }
     }
-
-    // Affiche une notification
     fun showEventNotification(context: Context, title: String, content: String, notificationId: Int) {
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_notification) // Assure-toi que l'icône existe
+            .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle(title)
             .setContentText(content)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            .setAutoCancel(true) // Permet de fermer la notification quand l'utilisateur la touche
+            .setAutoCancel(true)
 
-        // Envoie la notification
         with(NotificationManagerCompat.from(context)) {
-            notify(notificationId, builder.build())
         }
     }
-
-    // Annule une notification en utilisant son ID
     fun cancelNotification(context: Context, notificationId: Int) {
-        // Utilise NotificationManagerCompat pour plus de compatibilité
         NotificationManagerCompat.from(context).cancel(notificationId)
     }
 }

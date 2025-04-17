@@ -1,4 +1,4 @@
-package fr.isen.lheritier.isensmartcompanion.data
+package fr.isen.lheritier.isensmartcompanion.composable
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,8 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import fr.isen.lheritier.isensmartcompanion.Api.Interaction
-import fr.isen.lheritier.isensmartcompanion.composable.AppDatabase
+import fr.isen.lheritier.isensmartcompanion.data.Interaction
 import kotlinx.coroutines.launch
 
 
@@ -21,10 +20,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun HistoryScreen(database: AppDatabase) {
     val scope = rememberCoroutineScope()
-
-    // Collecte des interactions à partir de la base de données
     val interactions by database.interactionDao().getAllFlow().collectAsState(initial = emptyList<Interaction>())
-
     var showDeleteDialog by remember { mutableStateOf(false) }
 
     Column(modifier = Modifier.fillMaxSize()) {
@@ -33,12 +29,12 @@ fun HistoryScreen(database: AppDatabase) {
                 Text(
                     text = "🕚  Historique  🕚",
                     style = MaterialTheme.typography.headlineSmall.copy(
-                        fontWeight = FontWeight.Bold // Met le texte en gras
+                        fontWeight = FontWeight.Bold
                     ),
                     modifier = Modifier
-                        .fillMaxWidth() // occupe toute la largeur
+                        .fillMaxWidth()
                         .padding(bottom = 16.dp),
-                    textAlign = TextAlign.Center // centre le texte
+                    textAlign = TextAlign.Center
                 )
             },
             actions = {
@@ -65,8 +61,6 @@ fun HistoryScreen(database: AppDatabase) {
             }
         }
     }
-
-    // Dialogue de confirmation pour supprimer tout l'historique
     if (showDeleteDialog) {
         AlertDialog(
             onDismissRequest = { showDeleteDialog = false },
@@ -76,7 +70,6 @@ fun HistoryScreen(database: AppDatabase) {
                 TextButton(
                     onClick = {
                         scope.launch {
-                            // Suppression de toutes les interactions
                             database.interactionDao().deleteAll()
                         }
                         showDeleteDialog = false
@@ -111,7 +104,7 @@ fun InteractionItem(interaction: Interaction, onDelete: () -> Unit) {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = interaction.date, // Assure-toi que `date` est une propriété de `Interaction`
+                    text = interaction.date,
                     style = MaterialTheme.typography.bodySmall
                 )
                 IconButton(onClick = onDelete) {

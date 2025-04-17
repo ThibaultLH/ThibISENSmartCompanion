@@ -5,7 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import fr.isen.lheritier.isensmartcompanion.Api.EventDao
-import fr.isen.lheritier.isensmartcompanion.Api.Interaction
+import fr.isen.lheritier.isensmartcompanion.data.Interaction
 import fr.isen.lheritier.isensmartcompanion.Api.InteractionDao
 import fr.isen.lheritier.isensmartcompanion.Api.User
 import fr.isen.lheritier.isensmartcompanion.Api.UserDao
@@ -22,8 +22,6 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         @Volatile
         private var INSTANCE: AppDatabase? = null
-
-        // Méthode pour obtenir une instance de la base de données
         fun getInstance(context: Context): AppDatabase {
             return INSTANCE ?: synchronized(this) {
                 val instance = Room.databaseBuilder(
@@ -44,16 +42,12 @@ suspend fun insertEventsToDatabase(context: Context, events: List<Event>) {
 
     withContext(Dispatchers.IO) {
         events.forEach { event ->
-            // Vérifie si l'événement existe déjà dans la base de données
             val existingEvent = eventDao.getEventById(event.id)
 
             if (existingEvent == null) {
-                // Si l'événement n'existe pas, on l'insère
                 eventDao.insertEvent(event)
             } else {
-                // Si l'événement existe déjà, on peut choisir de ne rien faire ou de le mettre à jour
-                eventDao.insertEvent(event)  // Ajoute ici une logique pour la mise à jour si besoin
-                // Par exemple, tu pourrais faire eventDao.updateEvent(event) si tu veux vraiment mettre à jour
+                eventDao.insertEvent(event)
             }
         }
     }
@@ -61,8 +55,6 @@ suspend fun insertEventsToDatabase(context: Context, events: List<Event>) {
 object DatabaseManager {
 
     private var db: AppDatabase? = null
-
-    // Fonction pour obtenir une instance de la base de données
     fun getDatabase(context: Context): AppDatabase {
         if (db == null) {
             db = Room.databaseBuilder(

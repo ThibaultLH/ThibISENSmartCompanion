@@ -33,7 +33,6 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .padding(16.dp)
         ) {
-            // Titre
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -44,7 +43,6 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                 Text("Smart Companion", fontSize = 20.sp, fontWeight = FontWeight.Medium, color = Color.Gray)
             }
 
-            // Liste des réponses IA
             LazyColumn(
                 modifier = Modifier
                     .weight(1f)
@@ -67,13 +65,11 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                 }
             }
 
-            // Barre de chargement
             if (isLoading) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
                 Spacer(modifier = Modifier.height(8.dp))
             }
 
-            // Champ de texte + bouton d'envoi
             OutlinedTextField(
                 value = question,
                 onValueChange = { question = it },
@@ -85,9 +81,7 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                                 isLoading = true
                                 val response = Gemini.getGeminiResponse(question)
                                 if (response != null) {
-                                    // Ajoute la question et la réponse dans la liste locale
                                     responses = responses + "User : $question\nBoat : $response"
-                                    // Appeler le ViewModel pour enregistrer l'interaction dans la base de données
                                     viewModel.recordInteraction(question, response)
                                     question = ""
                                 } else {

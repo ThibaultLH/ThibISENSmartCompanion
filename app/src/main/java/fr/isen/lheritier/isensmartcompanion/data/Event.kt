@@ -5,7 +5,7 @@ import android.os.Parcelable
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "events") // Assurez-vous que "events" est bien spécifié ici
+@Entity(tableName = "events")
 data class Event(
     @PrimaryKey val id: String,
     val title: String,
@@ -31,11 +31,9 @@ data class Event(
         parcel.writeString(location)
         parcel.writeString(category)
     }
-
     override fun describeContents(): Int {
         return 0
     }
-
     companion object CREATOR : Parcelable.Creator<Event> {
         override fun createFromParcel(parcel: Parcel): Event {
             return Event(parcel)

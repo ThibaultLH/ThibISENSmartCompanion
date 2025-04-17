@@ -1,6 +1,5 @@
 package fr.isen.lheritier.isensmartcompanion.composable
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,6 +13,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.isen.lheritier.isensmartcompanion.data.Event
 
+
 @Composable
 fun AgendaScreen() {
     val context = LocalContext.current
@@ -22,18 +22,12 @@ fun AgendaScreen() {
     var allEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
     var selectedEvent by remember { mutableStateOf<Event?>(null) }
     var showDialog by remember { mutableStateOf(false) }
-
     val allCourses = mockCourses()
     val db = remember { AppDatabase.getInstance(context) }
 
     LaunchedEffect(Unit) {
         allEvents = db.eventDao().getAllEvents()
-
-        Log.d("AgendaScreen", "Tous les événements récupérés : $allEvents")
-
         pinnedEvents = PreferencesManager.getEnabledEvents(context, allEvents)
-
-        Log.d("AgendaScreen", "Événements suivis : $pinnedEvents")
     }
 
     Column(
@@ -41,7 +35,6 @@ fun AgendaScreen() {
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // En-tête des cours
         Text(
             text = "📚  Cours  📚",
             style = MaterialTheme.typography.headlineSmall.copy(
@@ -53,7 +46,6 @@ fun AgendaScreen() {
             textAlign = TextAlign.Center
         )
 
-        // Affichage des cours
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
@@ -64,7 +56,6 @@ fun AgendaScreen() {
 
         Spacer(Modifier.height(32.dp))
 
-        // En-tête des événements
         Text(
             text = "🔔  Événements  🔔  ",
             style = MaterialTheme.typography.headlineSmall.copy(
@@ -76,7 +67,6 @@ fun AgendaScreen() {
             textAlign = TextAlign.Center
         )
 
-        // Affichage des événements suivis
         if (pinnedEvents.isNotEmpty()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -95,8 +85,6 @@ fun AgendaScreen() {
             )
         }
     }
-
-    // Pop-up de détails événement
     if (showDialog && selectedEvent != null) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
@@ -134,7 +122,6 @@ fun EventItem(event: Event, onClick: () -> Unit) {
         }
     }
 }
-
 @Composable
 fun CourseItem(course: Course) {
     Card(
@@ -150,8 +137,6 @@ fun CourseItem(course: Course) {
         }
     }
 }
-
-// Mock pour les cours
 data class Course(
     val id: Int,
     val title: String,
@@ -159,7 +144,6 @@ data class Course(
     val room: String,
     val teacher: String
 )
-
 fun mockCourses(): List<Course> {
     return listOf(
         Course(1, "Maths avancées", "08h30 - 10h00", "B203", "M. Dupont"),

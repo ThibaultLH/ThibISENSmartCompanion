@@ -40,8 +40,9 @@ import com.example.isensmartcompanion.R
 import fr.isen.lheritier.isensmartcompanion.composable.AgendaScreen
 import fr.isen.lheritier.isensmartcompanion.composable.AppDatabase
 import fr.isen.lheritier.isensmartcompanion.composable.BottomNavigationBar
+import fr.isen.lheritier.isensmartcompanion.composable.EventsScreen
 import fr.isen.lheritier.isensmartcompanion.composable.InteractionViewModel
-import fr.isen.lheritier.isensmartcompanion.data.HistoryScreen
+import fr.isen.lheritier.isensmartcompanion.composable.HistoryScreen
 import fr.isen.lheritier.isensmartcompanion.composable.MainScreen
 import fr.isen.lheritier.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 
@@ -55,7 +56,6 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFFF8F6FC)
                 ) {
-                    // Passer l'instance de appDatabase à AppNavigation
                     AppNavigation(appDatabase = appDatabase)
                 }
             }
@@ -74,7 +74,6 @@ class MainActivity : ComponentActivity() {
 fun AppNavigation(appDatabase: AppDatabase) {
     val navController = rememberNavController()
 
-    // On passe le viewModel à MainScreen et HistoryScreen
     val viewModel: InteractionViewModel = viewModel()
 
     Scaffold(
@@ -114,7 +113,6 @@ fun InputSection(viewModel: InteractionViewModel) {
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(
                 onClick = {
-                    // Appeler la fonction du ViewModel pour gérer l'interaction avec Gemini
                     viewModel.handleUserMessage(text)
                     text = ""  // Réinitialiser la zone de texte après l'envoi
                 },
