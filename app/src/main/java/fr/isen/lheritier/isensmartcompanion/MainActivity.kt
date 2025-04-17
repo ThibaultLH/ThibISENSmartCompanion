@@ -3,47 +3,25 @@ package fr.isen.lheritier.isensmartcompanion
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.room.Room
-import com.example.isensmartcompanion.R
-import fr.isen.lheritier.isensmartcompanion.composable.AgendaScreen
-import fr.isen.lheritier.isensmartcompanion.composable.AppDatabase
-import fr.isen.lheritier.isensmartcompanion.composable.BottomNavigationBar
-import fr.isen.lheritier.isensmartcompanion.composable.EventsScreen
+import fr.isen.lheritier.isensmartcompanion.screen.AgendaScreen
+import fr.isen.lheritier.isensmartcompanion.database.AppDatabase
+import fr.isen.lheritier.isensmartcompanion.screen.BottomNavigationBar
+import fr.isen.lheritier.isensmartcompanion.screen.EventsScreen
 import fr.isen.lheritier.isensmartcompanion.composable.InteractionViewModel
-import fr.isen.lheritier.isensmartcompanion.composable.HistoryScreen
-import fr.isen.lheritier.isensmartcompanion.composable.MainScreen
+import fr.isen.lheritier.isensmartcompanion.screen.HistoryScreen
+import fr.isen.lheritier.isensmartcompanion.screen.MainScreen
 import fr.isen.lheritier.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 
 
@@ -92,41 +70,4 @@ fun AppNavigation(appDatabase: AppDatabase) {
     }
 }
 
-@Composable
-fun InputSection(viewModel: InteractionViewModel) {
-    var text by remember { mutableStateOf("") }
-
-    Column {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.Red, shape = MaterialTheme.shapes.medium)
-                .padding(horizontal = 16.dp, vertical = 12.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            BasicTextField(
-                value = text,
-                onValueChange = { text = it },
-                textStyle = TextStyle(fontSize = 16.sp, color = Color.Black),
-                modifier = Modifier.weight(1f)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            IconButton(
-                onClick = {
-                    viewModel.handleUserMessage(text)
-                    text = ""  // Réinitialiser la zone de texte après l'envoi
-                },
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(Color(0xFFD32F2F), shape = CircleShape)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_arrow),
-                    contentDescription = "Envoyer",
-                    tint = Color.White
-                )
-            }
-        }
-    }
-}
 

@@ -43,6 +43,7 @@ import androidx.lifecycle.viewModelScope
 import fr.isen.lheritier.isensmartcompanion.Api.Gemini
 import fr.isen.lheritier.isensmartcompanion.data.Event
 import fr.isen.lheritier.isensmartcompanion.data.Interaction
+import fr.isen.lheritier.isensmartcompanion.database.DatabaseManager
 import fr.isen.lheritier.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

@@ -32,8 +32,10 @@ object NotificationHelper {
             .setAutoCancel(true)
 
         with(NotificationManagerCompat.from(context)) {
+            notify(notificationId, builder.build()) // <= C'est CE QUI MANQUE
         }
     }
+
     fun cancelNotification(context: Context, notificationId: Int) {
         NotificationManagerCompat.from(context).cancel(notificationId)
     }

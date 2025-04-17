@@ -1,8 +1,8 @@
-package fr.isen.lheritier.isensmartcompanion.Api
+package fr.isen.lheritier.isensmartcompanion.data
 
-import androidx.room.PrimaryKey
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.PrimaryKey
 
 @Entity(tableName = "interactions")
 data class Interaction(
@@ -11,6 +11,3 @@ data class Interaction(
     @ColumnInfo(name = "response") val response: String,
     @ColumnInfo(name = "timestamp") val date: String  // ou Long, selon ton besoin
 )
-
-
-

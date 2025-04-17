@@ -1,4 +1,4 @@
-package fr.isen.lheritier.isensmartcompanion.composable
+package fr.isen.lheritier.isensmartcompanion.screen
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -13,6 +13,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.isen.lheritier.isensmartcompanion.data.Interaction
+import fr.isen.lheritier.isensmartcompanion.database.AppDatabase
 import kotlinx.coroutines.launch
 
 

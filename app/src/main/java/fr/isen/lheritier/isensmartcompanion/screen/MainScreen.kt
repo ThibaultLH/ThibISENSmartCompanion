@@ -1,28 +1,38 @@
-package fr.isen.lheritier.isensmartcompanion.composable
+package fr.isen.lheritier.isensmartcompanion.screen
 
 import android.widget.Toast
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
+import androidx.compose.material.icons.filled.Event
+import androidx.compose.material.icons.filled.Place
+import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import fr.isen.lheritier.isensmartcompanion.Api.Gemini
+import fr.isen.lheritier.isensmartcompanion.composable.InteractionViewModel
 import kotlinx.coroutines.launch
+import fr.isen.lheritier.isensmartcompanion.data.Event
 
 @Composable
 fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
     var question by remember { mutableStateOf("") }
     var responses by remember { mutableStateOf(listOf<String>()) }
     var isLoading by remember { mutableStateOf(false) }
+    var pinnedEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
 
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -47,7 +57,8 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp)
+                    .padding(bottom = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(responses) { response ->
                     Card(
@@ -62,6 +73,11 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                             color = Color.Black
                         )
                     }
+                }
+
+                // ➔ Liste des événements stylés
+                items(pinnedEvents) { event ->
+                    EventItemDisplay(event)
                 }
             }
 
@@ -97,6 +113,87 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
+            )
+        }
+    }
+}
+
+@Composable
+fun EventItemDisplay(event: Event) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable { /* Optionnel : clic */ }
+            .padding(horizontal = 8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = Color(0xFFE0F7FA)
+        ),
+        elevation = CardDefaults.cardElevation(6.dp)
+    ) {
+        Column(
+            modifier = Modifier
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color(0xFF80DEEA), Color(0xFFE0F7FA))
+                    )
+                )
+                .padding(16.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Event,
+                    contentDescription = "Icône événement",
+                    tint = Color(0xFF006064),
+                    modifier = Modifier.size(24.dp)
+                )
+                Text(
+                    text = event.title,
+                    style = MaterialTheme.typography.titleMedium.copy(
+                        fontWeight = FontWeight.Bold,
+                        color = Color(0xFF004D40)
+                    )
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Schedule,
+                    contentDescription = "Date",
+                    tint = Color(0xFF006064),
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = event.date,
+                    style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF004D40))
+                )
+
+                Icon(
+                    imageVector = Icons.Default.Place,
+                    contentDescription = "Lieu",
+                    tint = Color(0xFF006064),
+                    modifier = Modifier.size(20.dp)
+                )
+                Text(
+                    text = event.location,
+                    style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF004D40))
+                )
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = event.description,
+                style = MaterialTheme.typography.bodySmall.copy(color = Color(0xFF004D40)),
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
         }
     }

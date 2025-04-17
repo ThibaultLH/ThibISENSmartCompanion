@@ -16,7 +16,7 @@
         android:theme="@style/Theme.ISENSmartCompanion"
         tools:targetApi="31">
         <activity
-            android:name="fr.isen.lheritier.isensmartcompanion.EventDetailActivity"
+            android:name="fr.isen.lheritier.isensmartcompanion.composable.EventDetailActivity"
             android:exported="false"
             android:label="@string/title_activity_event_detail_activity.kt"
             android:theme="@style/Theme.ISENSmartCompanion"

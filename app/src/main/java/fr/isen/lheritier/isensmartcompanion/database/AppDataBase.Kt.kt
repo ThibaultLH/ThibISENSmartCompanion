@@ -1,4 +1,4 @@
-package fr.isen.lheritier.isensmartcompanion.composable
+package fr.isen.lheritier.isensmartcompanion.database
 
 import android.content.Context
 import androidx.room.Database
