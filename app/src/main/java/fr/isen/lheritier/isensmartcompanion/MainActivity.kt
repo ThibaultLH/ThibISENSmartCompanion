@@ -1,50 +1,50 @@
 package fr.isen.lheritier.isensmartcompanion
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.compose.*
+import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
 import com.example.isensmartcompanion.R
-
+import fr.isen.lheritier.isensmartcompanion.composable.AgendaScreen
+import fr.isen.lheritier.isensmartcompanion.composable.AppDatabase
+import fr.isen.lheritier.isensmartcompanion.composable.BottomNavigationBar
+import fr.isen.lheritier.isensmartcompanion.composable.InteractionViewModel
+import fr.isen.lheritier.isensmartcompanion.data.HistoryScreen
+import fr.isen.lheritier.isensmartcompanion.composable.MainScreen
 import fr.isen.lheritier.isensmartcompanion.ui.theme.ISENSmartCompanionTheme
 
-// Classe Event
-data class Event(
-    val id: Int,
-    val title: String,
-    val description: String,
-    val date: String,
-    val location: String,
-    val category: String
-)
-
-fun getEventList(): List<Event> {
-    return listOf(
-        Event(1, "Soirée BDE", "Une soirée organisée par le BDE", "12 Mars 2025", "ISEN", "Social"),
-        Event(2, "Gala de Charité", "Un gala pour récolter des fonds", "25 Mars 2025", "Palais des Congrès", "Cultural"),
-        Event(3, "Journée de Cohésion", "Une journée pour renforcer la cohésion", "10 Avril 2025", "ISEN", "Sport")
-    )
-}
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -55,93 +55,46 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = Color(0xFFF8F6FC)
                 ) {
-                    AppNavigation()
+                    // Passer l'instance de appDatabase à AppNavigation
+                    AppNavigation(appDatabase = appDatabase)
                 }
             }
-
         }
     }
-}
 
-// 🚀 1. Gère la navigation entre les écrans
+    private val appDatabase: AppDatabase by lazy {
+        Room.databaseBuilder(
+            applicationContext,
+            AppDatabase::class.java,
+            "app_database"
+        ).build()
+    }
+}
 @Composable
-fun AppNavigation() {
+fun AppNavigation(appDatabase: AppDatabase) {
     val navController = rememberNavController()
+
+    // On passe le viewModel à MainScreen et HistoryScreen
+    val viewModel: InteractionViewModel = viewModel()
 
     Scaffold(
         bottomBar = { BottomNavigationBar(navController) }
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = "main", // L'écran principal
+            startDestination = "main",
             modifier = Modifier.padding(innerPadding)
         ) {
-            composable("main") { MainScreen() }
+            composable("main") { MainScreen(viewModel = viewModel) }
+            composable("history") { HistoryScreen(database = appDatabase) }
             composable("events") { EventsScreen() }
             composable("agenda") { AgendaScreen() }
-            composable("history") { HistoryScreen() }
-            // Route pour l'écran de détail de l'événement
-            composable("eventDetail/{eventId}") { backStackEntry ->
-                val eventId = backStackEntry.arguments?.getString("eventId")?.toInt() ?: 0
-                EventDetailScreen(eventId = eventId)
-            }
         }
     }
 }
 
-// 🚀 2. Barre de Navigation en bas
 @Composable
-fun BottomNavigationBar(navController: NavController) {
-    NavigationBar(
-        containerColor = Color(0xFFE3E3ED)
-    ) {
-        val items = listOf("main" to "Accueil", "events" to "Événements", "agenda" to "Agenda", "history" to "Historique")
-
-        items.forEach { (route, label) ->
-            NavigationBarItem(
-                icon = { Icon(painter = painterResource(id = R.drawable.ic_arrow), contentDescription = label) },
-                label = { Text(label) },
-                selected = false,
-                onClick = { navController.navigate(route) }
-            )
-        }
-    }
-}
-
-// 🚀 3. Écran principal (Accueil)
-@Composable
-fun MainScreen() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp),
-
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Column(
-            modifier = Modifier.weight(1f),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Spacer(modifier = Modifier.height(50.dp))
-            Text(
-                text = "ISEN",
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color(0xFFD32F2F)
-            )
-            Text(
-                text = "Smart Companion",
-                fontSize = 16.sp,
-                color = Color.Gray
-            )
-        }
-        InputSection()
-    }
-}
-
-// 🚀 4. Champ de texte en bas de l'écran
-@Composable
-fun InputSection() {
+fun InputSection(viewModel: InteractionViewModel) {
     var text by remember { mutableStateOf("") }
 
     Column {
@@ -160,7 +113,11 @@ fun InputSection() {
             )
             Spacer(modifier = Modifier.width(8.dp))
             IconButton(
-                onClick = { /* Action du bouton */ },
+                onClick = {
+                    // Appeler la fonction du ViewModel pour gérer l'interaction avec Gemini
+                    viewModel.handleUserMessage(text)
+                    text = ""  // Réinitialiser la zone de texte après l'envoi
+                },
                 modifier = Modifier
                     .size(48.dp)
                     .background(Color(0xFFD32F2F), shape = CircleShape)
@@ -175,87 +132,3 @@ fun InputSection() {
     }
 }
 
-@Composable
-fun EventDetailScreen(eventId: Int) {
-    // Simuler la récupération de l'événement par son ID
-    val event = getEventById(eventId)
-
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-
-
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(
-            text = event.title,
-            fontWeight = FontWeight.Bold,
-            fontSize = 24.sp
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Description :")
-        Text(text = event.description, fontStyle = FontStyle.Italic)
-        Spacer(modifier = Modifier.height(16.dp))
-        Text(text = "Date : ${event.date}")
-        Text(text = "Lieu : ${event.location}")
-        Text(text = "Catégorie : ${event.category}")
-    }
-}
-
-// Cette fonction simule la récupération d'un événement par son ID.
-fun getEventById(eventId: Int): Event {
-    val events = listOf(
-        Event(1, "Soirée BDE", "Une soirée de cohésion pour les étudiants.", "2025-03-20", "ISEN Toulon", "Social"),
-        Event(2, "Gala de l'ISEN", "Le gala annuel de l'école.", "2025-04-10", "Palais des Congrès", "Culture"),
-        Event(3, "Journée de cohésion", "Journée d'activités et d'intégration.", "2025-03-28", "ISEN Toulon", "Cohésion")
-    )
-    return events.first { it.id == eventId }
-}
-
-
-
-
-// 🚀 6. Écran Agenda
-@Composable
-fun AgendaScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Agenda", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-// 🚀 7. Écran Historique
-@Composable
-fun HistoryScreen() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(text = "Historique", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-    }
-}
-
-// 🚀 8. Nouvelle activité pour afficher le détail d'un événement
-class EventDetailActivity : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            ISENSmartCompanionTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = Color.White
-                ) {
-                    Box(
-                        modifier = Modifier.fillMaxSize(),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(text = "Détail de l'Événement", fontSize = 24.sp, fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-        }
-    }
-}
