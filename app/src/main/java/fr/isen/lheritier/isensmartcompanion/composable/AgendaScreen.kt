@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.isen.lheritier.isensmartcompanion.data.Event
 
@@ -30,42 +32,64 @@ fun mockCourses(): List<Course> {
 @Composable
 fun AgendaScreen() {
     val context = LocalContext.current
-    val courses = mockCourses()
-    val allEvents = mockEvents() // Liste de tous les événements simulés
 
-    val pinnedEventIds = PreferencesManager.getEnabledEventIds(context)
-    Log.d("AgendaScreen", "Pinned Event IDs: $pinnedEventIds")
-    val pinnedEvents = allEvents.filter { it.id in pinnedEventIds }
-    Log.d("AgendaScreen", "Pinned Events: $pinnedEvents")
+    var pinnedEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
+    var allEvents by remember { mutableStateOf<List<Event>>(emptyList()) }
+    val allCourses = mockCourses()
+
+    val db = remember { AppDatabase.getInstance(context) } // Singleton pour la base de données
+
+    LaunchedEffect(Unit) {
+        allEvents = db.eventDao().getAllEvents()
+
+        Log.d("AgendaScreen", "Tous les événements récupérés : $allEvents")
+
+        pinnedEvents = PreferencesManager.getEnabledEvents(context, allEvents)
+
+        Log.d("AgendaScreen", "Événements suivis : $pinnedEvents")
+    }
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
+        // En-tête des cours
         Text(
-            text = "📚 Cours",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = 16.dp)
+            text = "📚  Cours  📚",
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            textAlign = TextAlign.Center
         )
 
+        // Affichage des cours
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(courses) { course ->
+            items(allCourses) { course ->
                 CourseItem(course)
             }
         }
 
         Spacer(Modifier.height(32.dp))
 
-        // Afficher les événements suivis (pinned)
+        // En-tête des événements
         Text(
-            text = "📌 Mes événements suivis",
-            style = MaterialTheme.typography.headlineSmall,
-            modifier = Modifier.padding(bottom = 8.dp)
+            text = "🔔  Événements  🔔  ",
+            style = MaterialTheme.typography.headlineSmall.copy(
+                fontWeight = FontWeight.Bold
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp),
+            textAlign = TextAlign.Center
         )
 
+        // Affichage des événements suivis (pinnedEvents)
         if (pinnedEvents.isNotEmpty()) {
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -127,6 +151,7 @@ fun mockEvents(): List<Event> {
         )
     )
 }
+
 @Composable
 fun CourseItem(course: Course) {
     Card(
@@ -142,5 +167,3 @@ fun CourseItem(course: Course) {
         }
     }
 }
-
-

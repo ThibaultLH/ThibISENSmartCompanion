@@ -1,6 +1,8 @@
 package fr.isen.lheritier.isensmartcompanion
-
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import android.content.Intent
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -20,9 +22,11 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import fr.isen.lheritier.isensmartcompanion.composable.insertEventsToDatabase
 
 import fr.isen.lheritier.isensmartcompanion.data.Event
 import fr.isen.lheritier.isensmartcompanion.data.RetrofitInstance
+import kotlinx.coroutines.coroutineScope
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -31,12 +35,20 @@ import retrofit2.Response
 fun EventsScreen() {
     val events = remember { mutableStateOf<List<Event>>(emptyList()) }
     val context = LocalContext.current
+    val coroutineScope = rememberCoroutineScope()
+
+    Log.d("AgendaScreen", "AAAAA $events")
 
     LaunchedEffect(Unit) {
         RetrofitInstance.api.getEvents().enqueue(object : Callback<List<Event>> {
             override fun onResponse(call: Call<List<Event>>, response: Response<List<Event>>) {
                 if (response.isSuccessful) {
                     events.value = response.body() ?: emptyList()
+                    Log.d("EventsScreen", "Événements chargés : ${events.value}")
+                    coroutineScope.launch(Dispatchers.IO) {
+                        insertEventsToDatabase(context, events.value)
+                    }
+
                 }
             }
 

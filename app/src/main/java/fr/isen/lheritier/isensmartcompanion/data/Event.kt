@@ -2,9 +2,12 @@ package fr.isen.lheritier.isensmartcompanion.data
 
 import android.os.Parcel
 import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 
+@Entity(tableName = "events") // Assurez-vous que "events" est bien spécifié ici
 data class Event(
-    val id: String,
+    @PrimaryKey val id: String,
     val title: String,
     val description: String,
     val date: String,

@@ -9,6 +9,8 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import fr.isen.lheritier.isensmartcompanion.Api.Interaction
 import fr.isen.lheritier.isensmartcompanion.composable.AppDatabase
@@ -27,7 +29,18 @@ fun HistoryScreen(database: AppDatabase) {
 
     Column(modifier = Modifier.fillMaxSize()) {
         TopAppBar(
-            title = { Text("Historique") },
+            title = {
+                Text(
+                    text = "🕚  Historique  🕚",
+                    style = MaterialTheme.typography.headlineSmall.copy(
+                        fontWeight = FontWeight.Bold // Met le texte en gras
+                    ),
+                    modifier = Modifier
+                        .fillMaxWidth() // occupe toute la largeur
+                        .padding(bottom = 16.dp),
+                    textAlign = TextAlign.Center // centre le texte
+                )
+            },
             actions = {
                 IconButton(onClick = { showDeleteDialog = true }) {
                     Icon(Icons.Default.Delete, contentDescription = "Supprimer tout")

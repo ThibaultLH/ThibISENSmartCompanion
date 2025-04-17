@@ -36,11 +36,8 @@ class EventDetailActivity : ComponentActivity() {
             @Suppress("DEPRECATION")
             intent.getParcelableExtra("event")
         }
-
-        // Crée le canal de notification
         NotificationHelper.createNotificationChannel(this)
 
-        // Vérifie la permission de notifications si la version Android est >= 13
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this, android.Manifest.permission.POST_NOTIFICATIONS
@@ -71,12 +68,10 @@ fun EventDetailScreen(event: Event?, innerPadding: PaddingValues) {
         val eventId = event.id
         val notificationId = eventId.hashCode()
 
-        // Etat pour les notifications
         var isNotificationEnabled by remember {
             mutableStateOf(PreferencesManager.isNotificationEnabled(context, eventId))
         }
 
-        // Variable pour annuler la notification si nécessaire
         var handler: Handler? = null
 
         Column(
@@ -97,19 +92,14 @@ fun EventDetailScreen(event: Event?, innerPadding: PaddingValues) {
                     style = MaterialTheme.typography.headlineMedium
                 )
 
-                // Icône pour activer/désactiver les notifications
                 IconButton(onClick = {
                     isNotificationEnabled = !isNotificationEnabled
                     PreferencesManager.setNotificationEnabled(context, eventId, isNotificationEnabled)
 
-                    // Si les notifications sont activées
                     if (isNotificationEnabled) {
-                        // Attente de 10 secondes avant d'envoyer la notification
                         handler = Handler(Looper.getMainLooper()).apply {
                             postDelayed({
-                                // Vérifier si les notifications sont toujours activées après 10 secondes
                                 if (isNotificationEnabled) {
-                                    // Afficher un Toast pour confirmer que les notifications sont activées
                                     Toast.makeText(
                                         context,
                                         "Les notifications pour l'événement ${event.title} ont été activées.",
@@ -127,7 +117,6 @@ fun EventDetailScreen(event: Event?, innerPadding: PaddingValues) {
                             }, 10_000) // 10 secondes d'attente
                         }
                     } else {
-                        // Si les notifications sont désactivées avant la fin des 10 secondes, annuler la notification
                         handler?.removeCallbacksAndMessages(null)
                         NotificationHelper.cancelNotification(context, notificationId)
                     }

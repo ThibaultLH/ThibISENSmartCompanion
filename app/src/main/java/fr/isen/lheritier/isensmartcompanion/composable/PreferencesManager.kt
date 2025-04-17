@@ -2,6 +2,9 @@ package fr.isen.lheritier.isensmartcompanion.composable
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
+import fr.isen.lheritier.isensmartcompanion.data.Event
+import androidx.core.content.edit
 
 object PreferencesManager {
     private const val PREFS_NAME = "event_notifications"
@@ -15,13 +18,20 @@ object PreferencesManager {
     }
 
     fun setNotificationEnabled(context: Context, eventId: String, enabled: Boolean) {
-        getPrefs(context).edit().putBoolean(eventId, enabled).apply()
+        getPrefs(context).edit { putBoolean(eventId, enabled) }
     }
 
     fun getEnabledEventIds(context: Context): List<String> {
-        // Récupère toutes les clés dans les préférences qui ont une valeur "true"
         return getPrefs(context).all
-            .filter { it.value == true }  // Filtre pour ne garder que celles où la notification est activée
-            .keys.toList()  // Liste des IDs des événements
+            .filter { it.value == true } // Filtrer les événements activés (valeur = true)
+            .keys.toList()
+    }
+
+    fun getEnabledEvents(context: Context, allEvents: List<Event>): List<Event> {
+        val enabledIds = getEnabledEventIds(context)
+
+        Log.d("PreferencesManager", "Pref Événements activés: $enabledIds")
+        Log.d("PreferencesManager", "Pref Tous les événements: $allEvents")
+        return allEvents.filter { it.id in enabledIds }
     }
 }
