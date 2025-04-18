@@ -67,13 +67,10 @@ dependencies {
     implementation ("com.google.code.gson:gson:2.8.8")
 
     implementation ("com.squareup.okhttp3:okhttp:4.9.0")
-    implementation("com.google.ai.client.generativeai:generativeai:0.9.0") // Remplacez 0.1.1 par la dernière version
+    implementation("com.google.ai.client.generativeai:generativeai:0.9.0")
     implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
     implementation("com.google.firebase:firebase-vertexai")
-    //implementation("androidx.room:room-runtime:2.6.1")
-    implementation(libs.support.annotations) // Remplacez 2.6.1 par la dernière version stable
-    //annotationProcessor("androidx.room:room-compiler:2.6.1") // Pour les annotations Room
-    //implementation("androidx.room:room-ktx:2.6.1")
+    implementation(libs.support.annotations)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
@@ -87,19 +84,12 @@ dependencies {
 
     val room_version = "2.7.0"
     implementation("androidx.room:room-runtime:$room_version")
-
-    // If this project uses any Kotlin source, use Kotlin Symbol Processing (KSP)
-    // See Add the KSP plugin to your project
-    //ksp("androidx.room:room-compiler:$room_version")
-
-    // If this project only uses Java source, use the Java annotationProcessor
-    // No additional plugins are necessary
-    kapt("androidx.room:room-compiler:$room_version") // ✅ la bonne ligne pour Kotlin
+    kapt("androidx.room:room-compiler:$room_version")
     implementation("androidx.room:room-ktx:$room_version")
     implementation("androidx.room:room-rxjava2:$room_version")
     implementation("androidx.room:room-rxjava3:$room_version")
     implementation("androidx.room:room-guava:$room_version")
     testImplementation("androidx.room:room-testing:$room_version")
     implementation("androidx.room:room-paging:$room_version")
-
+    implementation ("androidx.compose.material3:material3:1.3.2")
 }

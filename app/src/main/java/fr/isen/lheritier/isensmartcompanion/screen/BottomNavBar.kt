@@ -22,10 +22,10 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import fr.isen.lheritier.isensmartcompanion.composable.EventDetailActivity
 import fr.isen.lheritier.isensmartcompanion.data.Event
 import fr.isen.lheritier.isensmartcompanion.data.RetrofitInstance
 import fr.isen.lheritier.isensmartcompanion.database.insertEventsToDatabase
@@ -37,26 +37,72 @@ import retrofit2.Response
 
 @Composable
 fun BottomNavigationBar(navController: NavController) {
-    NavigationBar(
-        containerColor = Color(0xFFE3E3ED)
-    ) {
-        val items = listOf(
-            Triple("main", "Accueil", Icons.Default.Home),
-            Triple("events", "Événements", Icons.Default.Event),
-            Triple("agenda", "Agenda", Icons.Default.CalendarToday),
-            Triple("history", "Historique", Icons.Default.History)
-        )
+    // Liste des éléments de la BottomNavigationBar
+    val items = listOf(
+        Triple("main", "Accueil", Icons.Default.Home),
+        Triple("events", "Événements", Icons.Default.Event),
+        Triple("agenda", "Agenda", Icons.Default.CalendarToday),
+        Triple("history", "Historique", Icons.Default.History)
+    )
 
+    // NavigationBar
+    NavigationBar(
+        containerColor = Color(0xFFB2EBF2), // Une couleur de fond douce et moderne
+        contentColor = Color(0xFF00796B), // Une couleur primaire
+        modifier = Modifier
+            .fillMaxWidth() // S'assure que la barre occupe toute la largeur
+            .padding(0.dp) // Supprime le padding interne qui pourrait poser problème
+    ) {
+        // Parcours des éléments pour afficher les items de la barre de navigation
         items.forEach { (route, label, icon) ->
+            // Vérifie si la route actuelle est la même que celle du item
+            val isSelected = navController.currentBackStackEntry?.destination?.route == route
+
+            // Animation et effet de sélection avec un fond coloré et arrondi
             NavigationBarItem(
-                icon = { Icon(icon, contentDescription = label) },
-                label = { Text(label) },
-                selected = false,
-                onClick = { navController.navigate(route) }
+                icon = {
+                    Icon(
+                        imageVector = icon,
+                        contentDescription = label,
+                        tint = if (isSelected) Color(0xFF004D40) else Color(0xFF616161), // Couleur de l'icône sélectionnée
+                        modifier = Modifier.size(30.dp) // Augmente la taille des icônes
+                    )
+                },
+                label = {
+                    Text(
+                        text = label,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                            color = if (isSelected) Color(0xFF004D40) else Color.Gray,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 12.sp // Augmenter légèrement la taille du texte
+                        ),
+                        maxLines = 1, // Assurer qu'il n'y ait qu'une seule ligne
+                        overflow = TextOverflow.Ellipsis // Ajouter une ellipse si le texte est trop long
+                    )
+                },
+                selected = isSelected,
+                onClick = {
+                    // Naviguer vers la nouvelle route
+                    navController.navigate(route) {
+                        // Empêche l'ajout de multiples destinations identiques dans la stack
+                        popUpTo(navController.graph.startDestinationId) { saveState = true }
+                        launchSingleTop = true
+                    }
+                },
+                modifier = Modifier
+                    .padding(8.dp) // Espacement autour des éléments
+                    .background(
+                        color = if (isSelected) Color(0xFF80DEEA) else Color.Transparent, // Fond coloré lors de la sélection
+                        shape = MaterialTheme.shapes.medium // Coins arrondis
+                    )
+                    .padding(12.dp) // Espacement interne
             )
         }
     }
 }
+
+
+
 
 @Composable
 fun EventsScreen() {

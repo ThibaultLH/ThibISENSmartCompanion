@@ -8,9 +8,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.filled.Event
-import androidx.compose.material.icons.filled.Place
-import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,7 +35,15 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
 
-    Box(modifier = modifier.fillMaxSize()) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(
+                Brush.verticalGradient(
+                    colors = listOf(Color(0xFFFFCDD2), Color(0xFFFFF9C4)) // Dégradé de fond rose -> jaune clair
+                )
+            )
+    ) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -46,11 +52,21 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 16.dp),
+                    .padding(vertical = 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("ISEN", fontSize = 36.sp, fontWeight = FontWeight.Bold, color = Color.Red)
-                Text("Smart Companion", fontSize = 20.sp, fontWeight = FontWeight.Medium, color = Color.Gray)
+                Text(
+                    "ISEN",
+                    fontSize = 40.sp,
+                    fontWeight = FontWeight.ExtraBold,
+                    color = Color(0xFFD32F2F)
+                )
+                Text(
+                    "Smart Companion",
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Medium,
+                    color = Color(0xFF616161)
+                )
             }
 
             LazyColumn(
@@ -58,38 +74,42 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                     .weight(1f)
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 items(responses) { response ->
                     Card(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 4.dp),
-                        colors = CardDefaults.cardColors(containerColor = Color(0xFFF3F3F3))
+                        modifier = Modifier.fillMaxWidth(),
+                        colors = CardDefaults.cardColors(
+                            containerColor = Color(0xFFFFF8E1) // Jaune pâle
+                        ),
+                        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp)
                     ) {
                         Text(
                             text = response,
-                            modifier = Modifier.padding(12.dp),
-                            color = Color.Black
+                            modifier = Modifier.padding(16.dp),
+                            color = Color(0xFF3E2723)
                         )
                     }
                 }
 
-                // ➔ Liste des événements stylés
                 items(pinnedEvents) { event ->
                     EventItemDisplay(event)
                 }
             }
 
             if (isLoading) {
-                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                Spacer(modifier = Modifier.height(8.dp))
+                LinearProgressIndicator(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(vertical = 8.dp),
+                    color = Color(0xFFD32F2F)
+                )
             }
 
             OutlinedTextField(
                 value = question,
                 onValueChange = { question = it },
-                placeholder = { Text("Posez votre question") },
+                placeholder = { Text("Posez votre question", color = Color.Gray) },
                 trailingIcon = {
                     IconButton(onClick = {
                         if (question.isNotBlank()) {
@@ -109,9 +129,18 @@ fun MainScreen(viewModel: InteractionViewModel, modifier: Modifier = Modifier) {
                             Toast.makeText(context, "Veuillez écrire une question", Toast.LENGTH_SHORT).show()
                         }
                     }) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowForward, contentDescription = "Envoyer", tint = Color.Red)
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowForward,
+                            contentDescription = "Envoyer",
+                            tint = Color(0xFFD32F2F)
+                        )
                     }
                 },
+                colors = OutlinedTextFieldDefaults.colors(
+                    focusedBorderColor = Color.Red,
+                    unfocusedBorderColor = Color.Gray,
+                    cursorColor = Color.Red
+                ),
                 modifier = Modifier.fillMaxWidth()
             )
         }
@@ -198,3 +227,4 @@ fun EventItemDisplay(event: Event) {
         }
     }
 }
+
